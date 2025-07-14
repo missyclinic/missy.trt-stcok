@@ -160,9 +160,9 @@ async def ส่งtrt(interaction: discord.Interaction,
 @ส่งtrt.autocomplete("treatment4")
 @ส่งtrt.autocomplete("treatment5")
 async def autocomplete_treatment(interaction: discord.Interaction, current: str):
-    value1 = interaction.namespace.get("หมวด1")
-    value2 = interaction.namespace.get("หมวด2")
-    value3 = interaction.namespace.get("หมวด3")
+    value1 = getattr(interaction.namespace, "หมวด1", None)
+    value2 = getattr(interaction.namespace, "หมวด2", None)
+    value3 = getattr(interaction.namespace, "หมวด3", None)
     allowed = []
     for v in (value1, value2, value3):
         if v and v.value in CATEGORY_MAP:
