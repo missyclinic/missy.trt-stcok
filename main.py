@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-from discord.ui import View, Select, Button
 import os
 from dotenv import load_dotenv
 from collections import defaultdict
@@ -58,7 +57,7 @@ TREATMENT_CHANNEL_ID = 1394115507883606026
     ใช้_หมวก="ใช้ TRT-หมวก หรือไม่",
     ใช้_กกน="ใช้ TRT-กกน หรือไม่",
     ใช้_ชุดทำความสะอาด="ใช้ TRT-ชุดทำความสะอาด+บำรุง หรือไม่",
-    ใช้_Milky="ใช้ TRT-Milky ทำความสะอาด หรือไม่",
+    ใช้_milky="ใช้ TRT-Milky ทำความสะอาด หรือไม่",
     ใช้_ยาชา="ใช้ TRT-ยาชา หรือไม่",
     ใช้_แล็ปยาชา="ใช้ แล็ปยาชาหน้ากาก หรือไม่"
 )
@@ -91,7 +90,7 @@ async def ส่งtrt(interaction: discord.Interaction,
     ใช้_หมวก: bool = False,
     ใช้_กกน: bool = False,
     ใช้_ชุดทำความสะอาด: bool = False,
-    ใช้_Milky: bool = False,
+    ใช้_milky: bool = False,
     ใช้_ยาชา: bool = False,
     ใช้_แล็ปยาชา: bool = False
 ):
@@ -113,7 +112,7 @@ async def ส่งtrt(interaction: discord.Interaction,
         equipment_used.append("TRT-กกน")
     if ใช้_ชุดทำความสะอาด:
         equipment_used.append("TRT-ชุดทำความสะอาด+บำรุง")
-    if ใช้_Milky:
+    if ใช้_milky:
         equipment_used.append("TRT-Milky ทำความสะอาด")
     if ใช้_ยาชา:
         equipment_used.append("TRT-ยาชา")
