@@ -67,14 +67,14 @@ TREATMENT_CHANNEL_ID = 1394115507883606026
     treatment5="Treatment 5", therapist5="Therapist 5"
 )
 async def ส่งtrt(interaction: discord.Interaction,
-    branch: str, customer: str,
+    branch: app_commands.Choice[str], customer: str,
     use_hat: bool = False, use_underwear: bool = False, use_cleaning_kit: bool = False,
     use_milky: bool = False, use_cream: bool = False, use_lab_mask: bool = False,
-    treatment1: Optional[str] = None, therapist1: Optional[str] = None,
-    treatment2: Optional[str] = None, therapist2: Optional[str] = None,
-    treatment3: Optional[str] = None, therapist3: Optional[str] = None,
-    treatment4: Optional[str] = None, therapist4: Optional[str] = None,
-    treatment5: Optional[str] = None, therapist5: Optional[str] = None
+    treatment1: Optional[app_commands.Choice[str]] = None, therapist1: Optional[app_commands.Choice[str]] = None,
+    treatment2: Optional[app_commands.Choice[str]] = None, therapist2: Optional[app_commands.Choice[str]] = None,
+    treatment3: Optional[app_commands.Choice[str]] = None, therapist3: Optional[app_commands.Choice[str]] = None,
+    treatment4: Optional[app_commands.Choice[str]] = None, therapist4: Optional[app_commands.Choice[str]] = None,
+    treatment5: Optional[app_commands.Choice[str]] = None, therapist5: Optional[app_commands.Choice[str]] = None
 ):
     await interaction.response.defer(thinking=True)
     today_date = datetime.now().strftime("%Y-%m-%d")
@@ -82,11 +82,11 @@ async def ส่งtrt(interaction: discord.Interaction,
     count_today = sum(1 for row in records[1:] if row[1].startswith(today_date)) + 1
     group_id = f"{today_date.replace('-', '')}-{count_today}"
     treatments = [(treatment1, therapist1), (treatment2, therapist2), (treatment3, therapist3), (treatment4, therapist4), (treatment5, therapist5)]
-    msg = f"{count_today} ✅ บันทึก Treatment สำหรับ\nชื่อลูกค้า {customer}\nทำที่ : {branch}\nGroup ID: {group_id}\nรายการTRT\n"
+    msg = f"{count_today} ✅ บันทึก Treatment สำหรับ\nชื่อลูกค้า {customer}\nทำที่ : {branch.value}\nGroup ID: {group_id}\nรายการTRT\n"
     for t, p in treatments:
         if t and p:
-            usage_sheet.append_row([str(uuid.uuid4()), datetime.now().isoformat(), branch, t, 1, customer, p, group_id, "pending"])
-            msg += f"- {t} | {p}\n"
+            usage_sheet.append_row([str(uuid.uuid4()), datetime.now().isoformat(), branch.value, t.value, 1, customer, p.value, group_id, "pending"])
+            msg += f"- {t.value} | {p.value}\n"
     equipment_used = []
     if use_hat: equipment_used.append("TRT-หมวก")
     if use_underwear: equipment_used.append("TRT-กกน")
@@ -95,7 +95,7 @@ async def ส่งtrt(interaction: discord.Interaction,
     if use_cream: equipment_used.append("TRT-ยาชา")
     if use_lab_mask: equipment_used.append("แล็ปยาชาหน้ากาก")
     for eq in equipment_used:
-        usage_sheet.append_row([str(uuid.uuid4()), datetime.now().isoformat(), branch, eq, 1, customer, "อุปกรณ์", group_id, "pending"])
+        usage_sheet.append_row([str(uuid.uuid4()), datetime.now().isoformat(), branch.value, eq, 1, customer, "อุปกรณ์", group_id, "pending"])
     msg += f"อุปกรณ์: {', '.join(equipment_used)}" if equipment_used else "ไม่มีอุปกรณ์"
     channel = interaction.guild.get_channel(TREATMENT_CHANNEL_ID)
     await channel.send(msg)
