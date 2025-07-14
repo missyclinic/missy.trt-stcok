@@ -59,17 +59,29 @@ TREATMENT_CHANNEL_ID = 1394115507883606026
 
 @tree.command(name="ส่งtrt", description="บันทึก Treatment พร้อมอุปกรณ์")
 @app_commands.describe(
-    branch="เลือกสาขา", customer="ชื่อลูกค้า", use_hat="ใช้ TRT-หมวก", use_underwear="ใช้ TRT-กกน",
-    use_cleaning_kit="ใช้ TRT-ชุดทำความสะอาด+บำรุง", use_milky="ใช้ TRT-Milky ทำความสะอาด",
-    use_cream="ใช้ TRT-ยาชา", use_lab_mask="ใช้ แล็ปยาชาหน้ากาก",
-    treatment1="Treatment 1", therapist1="Therapist 1", treatment2="Treatment 2", therapist2="Therapist 2",
-    treatment3="Treatment 3", therapist3="Therapist 3", treatment4="Treatment 4", therapist4="Therapist 4",
-    treatment5="Treatment 5", therapist5="Therapist 5"
+    สาขา="เลือกสาขา",
+    ลูกค้า="ชื่อลูกค้า",
+    ใช้หมวก="ใช้ TRT-หมวก",
+    ใช้กกน="ใช้ TRT-กกน",
+    ใช้ชุดทำความสะอาด="ใช้ TRT-ชุดทำความสะอาด+บำรุง",
+    ใช้Milky="ใช้ TRT-Milky ทำความสะอาด",
+    ใช้ยาชา="ใช้ TRT-ยาชา",
+    ใช้แล็ปยาชา="ใช้ แล็ปยาชาหน้ากาก",
+    treatment1="ทรีตเมนต์ 1",
+    therapist1="พนักงาน 1",
+    treatment2="ทรีตเมนต์ 2",
+    therapist2="พนักงาน 2",
+    treatment3="ทรีตเมนต์ 3",
+    therapist3="พนักงาน 3",
+    treatment4="ทรีตเมนต์ 4",
+    therapist4="พนักงาน 4",
+    treatment5="ทรีตเมนต์ 5",
+    therapist5="พนักงาน 5"
 )
 async def ส่งtrt(interaction: discord.Interaction,
-    branch: app_commands.Choice[str], customer: str,
-    use_hat: bool = False, use_underwear: bool = False, use_cleaning_kit: bool = False,
-    use_milky: bool = False, use_cream: bool = False, use_lab_mask: bool = False,
+    สาขา: app_commands.Choice[str], ลูกค้า: str,
+    ใช้หมวก: bool = False, ใช้กกน: bool = False, ใช้ชุดทำความสะอาด: bool = False,
+    ใช้Milky: bool = False, ใช้ยาชา: bool = False, ใช้แล็ปยาชา: bool = False,
     treatment1: Optional[app_commands.Choice[str]] = None, therapist1: Optional[app_commands.Choice[str]] = None,
     treatment2: Optional[app_commands.Choice[str]] = None, therapist2: Optional[app_commands.Choice[str]] = None,
     treatment3: Optional[app_commands.Choice[str]] = None, therapist3: Optional[app_commands.Choice[str]] = None,
@@ -82,20 +94,20 @@ async def ส่งtrt(interaction: discord.Interaction,
     count_today = sum(1 for row in records[1:] if row[1].startswith(today_date)) + 1
     group_id = f"{today_date.replace('-', '')}-{count_today}"
     treatments = [(treatment1, therapist1), (treatment2, therapist2), (treatment3, therapist3), (treatment4, therapist4), (treatment5, therapist5)]
-    msg = f"{count_today} ✅ บันทึก Treatment สำหรับ\nชื่อลูกค้า {customer}\nทำที่ : {branch.value}\nGroup ID: {group_id}\nรายการTRT\n"
+    msg = f"{count_today} ✅ บันทึก Treatment สำหรับ\nชื่อลูกค้า {ลูกค้า}\nทำที่ : {สาขา.value}\nGroup ID: {group_id}\nรายการTRT\n"
     for t, p in treatments:
         if t and p:
-            usage_sheet.append_row([str(uuid.uuid4()), datetime.now().isoformat(), branch.value, t.value, 1, customer, p.value, group_id, "pending"])
+            usage_sheet.append_row([str(uuid.uuid4()), datetime.now().isoformat(), สาขา.value, t.value, 1, ลูกค้า, p.value, group_id, "pending"])
             msg += f"- {t.value} | {p.value}\n"
     equipment_used = []
-    if use_hat: equipment_used.append("TRT-หมวก")
-    if use_underwear: equipment_used.append("TRT-กกน")
-    if use_cleaning_kit: equipment_used.append("TRT-ชุดทำความสะอาด+บำรุง")
-    if use_milky: equipment_used.append("TRT-Milky ทำความสะอาด")
-    if use_cream: equipment_used.append("TRT-ยาชา")
-    if use_lab_mask: equipment_used.append("แล็ปยาชาหน้ากาก")
+    if ใช้หมวก: equipment_used.append("TRT-หมวก")
+    if ใช้กกน: equipment_used.append("TRT-กกน")
+    if ใช้ชุดทำความสะอาด: equipment_used.append("TRT-ชุดทำความสะอาด+บำรุง")
+    if ใช้Milky: equipment_used.append("TRT-Milky ทำความสะอาด")
+    if ใช้ยาชา: equipment_used.append("TRT-ยาชา")
+    if ใช้แล็ปยาชา: equipment_used.append("แล็ปยาชาหน้ากาก")
     for eq in equipment_used:
-        usage_sheet.append_row([str(uuid.uuid4()), datetime.now().isoformat(), branch.value, eq, 1, customer, "อุปกรณ์", group_id, "pending"])
+        usage_sheet.append_row([str(uuid.uuid4()), datetime.now().isoformat(), สาขา.value, eq, 1, ลูกค้า, "อุปกรณ์", group_id, "pending"])
     msg += f"อุปกรณ์: {', '.join(equipment_used)}" if equipment_used else "ไม่มีอุปกรณ์"
     channel = interaction.guild.get_channel(TREATMENT_CHANNEL_ID)
     await channel.send(msg)
