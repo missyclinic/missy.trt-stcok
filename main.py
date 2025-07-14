@@ -79,14 +79,14 @@ TREATMENT_CHANNEL_ID = 1394115507883606026
     therapist5="พนักงาน 5"
 )
 async def ส่งtrt(interaction: discord.Interaction,
-    สาขา: app_commands.Choice[str], ลูกค้า: str,
+    สาขา: str, ลูกค้า: str,
     ใช้หมวก: bool = False, ใช้กกน: bool = False, ใช้ชุดทำความสะอาด: bool = False,
     ใช้Milky: bool = False, ใช้ยาชา: bool = False, ใช้แล็ปยาชา: bool = False,
-    treatment1: Optional[app_commands.Choice[str]] = None, therapist1: Optional[app_commands.Choice[str]] = None,
-    treatment2: Optional[app_commands.Choice[str]] = None, therapist2: Optional[app_commands.Choice[str]] = None,
-    treatment3: Optional[app_commands.Choice[str]] = None, therapist3: Optional[app_commands.Choice[str]] = None,
-    treatment4: Optional[app_commands.Choice[str]] = None, therapist4: Optional[app_commands.Choice[str]] = None,
-    treatment5: Optional[app_commands.Choice[str]] = None, therapist5: Optional[app_commands.Choice[str]] = None
+    treatment1: Optional[str] = None, therapist1: Optional[str] = None,
+    treatment2: Optional[str] = None, therapist2: Optional[str] = None,
+    treatment3: Optional[str] = None, therapist3: Optional[str] = None,
+    treatment4: Optional[str] = None, therapist4: Optional[str] = None,
+    treatment5: Optional[str] = None, therapist5: Optional[str] = None
 ):
     await interaction.response.defer(thinking=True)
     today_date = datetime.now().strftime("%Y-%m-%d")
@@ -94,11 +94,11 @@ async def ส่งtrt(interaction: discord.Interaction,
     count_today = sum(1 for row in records[1:] if row[1].startswith(today_date)) + 1
     group_id = f"{today_date.replace('-', '')}-{count_today}"
     treatments = [(treatment1, therapist1), (treatment2, therapist2), (treatment3, therapist3), (treatment4, therapist4), (treatment5, therapist5)]
-    msg = f"{count_today} ✅ บันทึก Treatment สำหรับ\nชื่อลูกค้า {ลูกค้า}\nทำที่ : {สาขา.value}\nGroup ID: {group_id}\nรายการTRT\n"
+    msg = f"{count_today} ✅ บันทึก Treatment สำหรับ\nชื่อลูกค้า {ลูกค้า}\nทำที่ : {สาขา}\nGroup ID: {group_id}\nรายการTRT\n"
     for t, p in treatments:
         if t and p:
-            usage_sheet.append_row([str(uuid.uuid4()), datetime.now().isoformat(), สาขา.value, t.value, 1, ลูกค้า, p.value, group_id, "pending"])
-            msg += f"- {t.value} | {p.value}\n"
+            usage_sheet.append_row([str(uuid.uuid4()), datetime.now().isoformat(), สาขา, t, 1, ลูกค้า, p, group_id, "pending"])
+            msg += f"- {t} | {p}\n"
     equipment_used = []
     if ใช้หมวก: equipment_used.append("TRT-หมวก")
     if ใช้กกน: equipment_used.append("TRT-กกน")
@@ -107,11 +107,31 @@ async def ส่งtrt(interaction: discord.Interaction,
     if ใช้ยาชา: equipment_used.append("TRT-ยาชา")
     if ใช้แล็ปยาชา: equipment_used.append("แล็ปยาชาหน้ากาก")
     for eq in equipment_used:
-        usage_sheet.append_row([str(uuid.uuid4()), datetime.now().isoformat(), สาขา.value, eq, 1, ลูกค้า, "อุปกรณ์", group_id, "pending"])
+        usage_sheet.append_row([str(uuid.uuid4()), datetime.now().isoformat(), สาขา, eq, 1, ลูกค้า, "อุปกรณ์", group_id, "pending"])
     msg += f"อุปกรณ์: {', '.join(equipment_used)}" if equipment_used else "ไม่มีอุปกรณ์"
     channel = interaction.guild.get_channel(TREATMENT_CHANNEL_ID)
     await channel.send(msg)
     await interaction.followup.send(f"✅ บันทึกเรียบร้อย Group ID: {group_id}", ephemeral=True)
+
+@ส่งtrt.autocomplete("treatment1")
+@ส่งtrt.autocomplete("treatment2")
+@ส่งtrt.autocomplete("treatment3")
+@ส่งtrt.autocomplete("treatment4")
+@ส่งtrt.autocomplete("treatment5")
+async def autocomplete_treatment(interaction: discord.Interaction, current: str):
+    return [app_commands.Choice(name=t, value=t) for t in TREATMENTS_ALL if current.lower() in t.lower()][:20]
+
+@ส่งtrt.autocomplete("therapist1")
+@ส่งtrt.autocomplete("therapist2")
+@ส่งtrt.autocomplete("therapist3")
+@ส่งtrt.autocomplete("therapist4")
+@ส่งtrt.autocomplete("therapist5")
+async def autocomplete_therapist(interaction: discord.Interaction, current: str):
+    return [app_commands.Choice(name=t, value=t) for t in THERAPISTS if current.lower() in t.lower()][:20]
+
+@ส่งtrt.autocomplete("สาขา")
+async def autocomplete_branch(interaction: discord.Interaction, current: str):
+    return [app_commands.Choice(name=b, value=b) for b in BRANCHES if current.lower() in b.lower()][:20]
 
 @bot.event
 async def on_ready():
