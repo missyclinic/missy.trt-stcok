@@ -165,8 +165,8 @@ async def autocomplete_treatment(interaction: discord.Interaction, current: str)
     value3 = getattr(interaction.namespace, "หมวด3", None)
     allowed = []
     for v in (value1, value2, value3):
-        if v and v.value in CATEGORY_MAP:
-            allowed += CATEGORY_MAP[v.value]
+        if v and v in CATEGORY_MAP:
+            allowed += CATEGORY_MAP[v]
     allowed = list(set(allowed))
     if not allowed:
         allowed = TREATMENTS_ALL
