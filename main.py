@@ -10,6 +10,7 @@ import uuid
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import json
+from typing import Optional
 
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
