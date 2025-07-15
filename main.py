@@ -4,9 +4,10 @@ from dotenv import load_dotenv
 load_dotenv()  # เผื่อรัน local ยังใช้ .env, ถ้าบน Railway จะดึงจาก Environment Variables เอง
 
 TOKEN = os.getenv("TOKEN")
-CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
-ADMIN_ONLY_CHANNEL_ID = int(os.getenv("ADMIN_ONLY_CHANNEL_ID"))
-TREATMENT_CHANNEL_ID = int(os.getenv("TREATMENT_CHANNEL_ID"))
+CHANNEL_ID = 1394115507883606026
+ADMIN_ONLY_CHANNEL_ID = 1394133334317203476
+TREATMENT_CHANNEL_ID = 1394115507883606026
+
 
 intents = discord.Intents.default()
 intents.message_content = True
