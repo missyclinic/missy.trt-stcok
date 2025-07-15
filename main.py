@@ -24,7 +24,6 @@ TREATMENTS_SPLIT_3 = ["TRT-Revive (HAIR)", "Magnet SkinPro - Wish Care", "Magnet
 
 THERAPISTS = ["วิ PRY", "รัก PRY", "ปาร์ตี้ SM", "คนที่ 4", "คนที่ 5", "คนที่ 6", "คนที่ 7"]
 BRANCHES = ["เซ็นทรัลระยอง", "แพชชั่นระยอง", "พระราม2"]
-EQUIPMENTS = ["ไม่ใช้", "TRT-หมวก", "TRT-Milky ทำความสะอาด", "TRT-ยาชา", "TRT-กกน", "TRT-ชุดทำความสะอาด+บำรุง", "แล็ปยาชาหน้ากาก"]
 
 ADMIN_CHANNEL_ID = 1394115416049061918
 ADMIN_ONLY_CHANNEL_ID = 1394133334317203476
@@ -34,7 +33,12 @@ TREATMENT_CHANNEL_ID = 1394115507883606026
 @app_commands.describe(
     สาขา="เลือกสาขา",
     ลูกค้า="ชื่อลูกค้า",
-    ใช้อุปกรณ์="เลือกอุปกรณ์ที่ใช้",
+    ใช้_หมวก="ใช้ TRT-หมวก หรือไม่",
+    ใช้_กกน="ใช้ TRT-กกน หรือไม่",
+    ใช้_ชุดทำความสะอาด="ใช้ TRT-ชุดทำความสะอาด+บำรุง หรือไม่",
+    ใช้_milky="ใช้ TRT-Milky ทำความสะอาด หรือไม่",
+    ใช้_ยาชา="ใช้ TRT-ยาชา หรือไม่",
+    ใช้_แล็ปยาชา="ใช้ แล็ปยาชาหน้ากาก หรือไม่",
     treatment1_1="ทรีตเมนต์ 1 กลุ่ม 1",
     treatment1_2="ทรีตเมนต์ 1 กลุ่ม 2",
     treatment1_3="ทรีตเมนต์ 1 กลุ่ม 3",
@@ -48,27 +52,58 @@ TREATMENT_CHANNEL_ID = 1394115507883606026
     treatment3_3="ทรีตเมนต์ 3 กลุ่ม 3",
     therapist3="พนักงาน 3"
 )
-async def ส่งtrt(interaction: discord.Interaction, สาขา: str, ลูกค้า: str, ใช้อุปกรณ์: str,
-                 treatment1_1: Optional[str] = None, treatment1_2: Optional[str] = None, treatment1_3: Optional[str] = None, therapist1: Optional[str] = None,
-                 treatment2_1: Optional[str] = None, treatment2_2: Optional[str] = None, treatment2_3: Optional[str] = None, therapist2: Optional[str] = None,
-                 treatment3_1: Optional[str] = None, treatment3_2: Optional[str] = None, treatment3_3: Optional[str] = None, therapist3: Optional[str] = None):
+@app_commands.choices(
+    สาขา=[app_commands.Choice(name=b, value=b) for b in BRANCHES],
+    treatment1_1=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_1],
+    treatment1_2=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_2],
+    treatment1_3=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_3],
+    treatment2_1=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_1],
+    treatment2_2=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_2],
+    treatment2_3=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_3],
+    treatment3_1=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_1],
+    treatment3_2=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_2],
+    treatment3_3=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_3],
+    therapist1=[app_commands.Choice(name=t, value=t) for t in THERAPISTS],
+    therapist2=[app_commands.Choice(name=t, value=t) for t in THERAPISTS],
+    therapist3=[app_commands.Choice(name=t, value=t) for t in THERAPISTS],
+)
+async def ส่งtrt(interaction: discord.Interaction, สาขา: app_commands.Choice[str], ลูกค้า: str,
+                 ใช้_หมวก: Optional[bool] = False,
+                 ใช้_กกน: Optional[bool] = False,
+                 ใช้_ชุดทำความสะอาด: Optional[bool] = False,
+                 ใช้_milky: Optional[bool] = False,
+                 ใช้_ยาชา: Optional[bool] = False,
+                 ใช้_แล็ปยาชา: Optional[bool] = False,
+                 treatment1_1: Optional[app_commands.Choice[str]] = None, treatment1_2: Optional[app_commands.Choice[str]] = None, treatment1_3: Optional[app_commands.Choice[str]] = None, therapist1: Optional[app_commands.Choice[str]] = None,
+                 treatment2_1: Optional[app_commands.Choice[str]] = None, treatment2_2: Optional[app_commands.Choice[str]] = None, treatment2_3: Optional[app_commands.Choice[str]] = None, therapist2: Optional[app_commands.Choice[str]] = None,
+                 treatment3_1: Optional[app_commands.Choice[str]] = None, treatment3_2: Optional[app_commands.Choice[str]] = None, treatment3_3: Optional[app_commands.Choice[str]] = None, therapist3: Optional[app_commands.Choice[str]] = None):
 
     await interaction.response.defer(thinking=True)
     today_date = datetime.now().strftime("%Y-%m-%d")
     group_id = f"{today_date.replace('-', '')}-{str(uuid.uuid4())[:6]}"
-    msg = f"✅ บันทึกทรีตเมนต์สำหรับ\nชื่อลูกค้า {ลูกค้า}\nทำที่ : {สาขา}\nGroup ID: {group_id}\nรายการ TRT\n"
+    msg = f"✅ บันทึกทรีตเมนต์สำหรับ\nชื่อลูกค้า {ลูกค้า}\nทำที่ : {สาขา.value}\nGroup ID: {group_id}\nรายการ TRT\n"
     treatments = [
-        (treatment1_1 or treatment1_2 or treatment1_3, therapist1),
-        (treatment2_1 or treatment2_2 or treatment2_3, therapist2),
-        (treatment3_1 or treatment3_2 or treatment3_3, therapist3)
+        ((treatment1_1.value if treatment1_1 else treatment1_2.value if treatment1_2 else treatment1_3.value if treatment1_3 else None), therapist1.value if therapist1 else None),
+        ((treatment2_1.value if treatment2_1 else treatment2_2.value if treatment2_2 else treatment2_3.value if treatment2_3 else None), therapist2.value if therapist2 else None),
+        ((treatment3_1.value if treatment3_1 else treatment3_2.value if treatment3_2 else treatment3_3.value if treatment3_3 else None), therapist3.value if therapist3 else None)
     ]
     for t, p in treatments:
         if t and p:
             msg += f"- {t} | {p}\n"
-    if ใช้อุปกรณ์ != "ไม่ใช้":
-        msg += f"อุปกรณ์: {ใช้อุปกรณ์}"
-    else:
-        msg += "ไม่มีอุปกรณ์"
+    equipment_list = []
+    if ใช้_หมวก:
+        equipment_list.append("TRT-หมวก")
+    if ใช้_กกน:
+        equipment_list.append("TRT-กกน")
+    if ใช้_ชุดทำความสะอาด:
+        equipment_list.append("TRT-ชุดทำความสะอาด+บำรุง")
+    if ใช้_milky:
+        equipment_list.append("TRT-Milky ทำความสะอาด")
+    if ใช้_ยาชา:
+        equipment_list.append("TRT-ยาชา")
+    if ใช้_แล็ปยาชา:
+        equipment_list.append("แล็ปยาชาหน้ากาก")
+    msg += f"อุปกรณ์: {', '.join(equipment_list)}" if equipment_list else "ไม่มีอุปกรณ์"
     channel = interaction.guild.get_channel(TREATMENT_CHANNEL_ID)
     await channel.send(msg)
     await interaction.followup.send(f"✅ บันทึกเรียบร้อย Group ID: {group_id}", ephemeral=True)
