@@ -1,12 +1,12 @@
-import discord
-from flask import Flask, request
-import threading
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv()  # เผื่อรัน local ยังใช้ .env, ถ้าบน Railway จะดึงจาก Environment Variables เอง
+
 TOKEN = os.getenv("TOKEN")
-CHANNEL_ID = int(os.getenv("CHANNEL_ID"))  # ใส่ใน .env
+CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
+ADMIN_ONLY_CHANNEL_ID = int(os.getenv("ADMIN_ONLY_CHANNEL_ID"))
+TREATMENT_CHANNEL_ID = int(os.getenv("TREATMENT_CHANNEL_ID"))
 
 intents = discord.Intents.default()
 intents.message_content = True
