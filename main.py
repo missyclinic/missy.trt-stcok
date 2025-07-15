@@ -52,6 +52,21 @@ TREATMENT_CHANNEL_ID = 1394115507883606026
     treatment3_3="ทรีตเมนต์ 3 กลุ่ม 3",
     therapist3="พนักงาน 3"
 )
+@app_commands.choices(
+    สาขา=[app_commands.Choice(name=b, value=b) for b in BRANCHES],
+    treatment1_1=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_1],
+    treatment1_2=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_2],
+    treatment1_3=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_3],
+    therapist1=[app_commands.Choice(name=t, value=t) for t in THERAPISTS],
+    treatment2_1=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_1],
+    treatment2_2=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_2],
+    treatment2_3=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_3],
+    therapist2=[app_commands.Choice(name=t, value=t) for t in THERAPISTS],
+    treatment3_1=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_1],
+    treatment3_2=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_2],
+    treatment3_3=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_3],
+    therapist3=[app_commands.Choice(name=t, value=t) for t in THERAPISTS]
+)
 async def ส่งtrt(interaction: discord.Interaction, สาขา: str, ลูกค้า: str,
                  ใช้_หมวก: Optional[bool] = False,
                  ใช้_กกน: Optional[bool] = False,
