@@ -9,23 +9,26 @@ intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-
-load_dotenv()  # เผื่อรัน local ยังใช้ .env, ถ้าบน Railway จะดึงจาก Environment Variables เอง
-
+load_dotenv()
 TOKEN = os.getenv("TOKEN")
 CHANNEL_ID = 1394115507883606026
 ADMIN_ONLY_CHANNEL_ID = 1394133334317203476
 TREATMENT_CHANNEL_ID = 1394115507883606026
 
-
 app = Flask(__name__)
+
+@bot.event
+async def on_ready():
+    print(f"Bot {bot.user} is ready!")
+    for guild in bot.guilds:
+        print(f"Connected to server: {guild.name} ({guild.id})")
+        for channel in guild.text_channels:
+            print(f"- Channel: {channel.name} ({channel.id})")
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
     data = request.json
     print("Webhook received:", data)
-
-    # ส่งเข้า Discord ผ่าน background thread
     threading.Thread(target=send_to_discord, args=(data,)).start()
     return {"status": "ok"}, 200
 
@@ -36,7 +39,6 @@ def send_to_discord(data):
     if channel:
         treatments = "\n".join([f"- {t['name']} | {t['therapist']}" for t in data.get("treatments", [])])
         equipment = ", ".join(data.get("equipment", []))
-
         message = (
             f"✅ บันทึกทรีตเมนต์ผ่าน Google Sheets\n"
             f"ลูกค้า: {data.get('customer')}\n"
