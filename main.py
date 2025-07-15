@@ -30,7 +30,9 @@ def webhook():
     return {"status": "ok"}, 200
 
 def send_to_discord(data):
+    print("Sending to Discord Channel:", CHANNEL_ID)
     channel = bot.get_channel(CHANNEL_ID)
+    print("Channel Object:", channel)
     if channel:
         treatments = "\n".join([f"- {t['name']} | {t['therapist']}" for t in data.get("treatments", [])])
         equipment = ", ".join(data.get("equipment", []))
