@@ -3,6 +3,12 @@ import os
 from flask import Flask, request
 import threading
 from dotenv import load_dotenv
+from discord.ext import commands
+
+intents = discord.Intents.default()
+intents.message_content = True
+bot = commands.Bot(command_prefix="!", intents=intents)
+
 
 load_dotenv()  # เผื่อรัน local ยังใช้ .env, ถ้าบน Railway จะดึงจาก Environment Variables เอง
 
@@ -11,10 +17,6 @@ CHANNEL_ID = 1394115507883606026
 ADMIN_ONLY_CHANNEL_ID = 1394133334317203476
 TREATMENT_CHANNEL_ID = 1394115507883606026
 
-
-intents = discord.Intents.default()
-intents.message_content = True
-bot = discord.Bot(intents=intents)
 
 app = Flask(__name__)
 
