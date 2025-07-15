@@ -1,4 +1,7 @@
+import discord
 import os
+from flask import Flask, request
+import threading
 from dotenv import load_dotenv
 
 load_dotenv()  # เผื่อรัน local ยังใช้ .env, ถ้าบน Railway จะดึงจาก Environment Variables เอง
