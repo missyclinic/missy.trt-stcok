@@ -52,31 +52,7 @@ TREATMENT_CHANNEL_ID = 1394115507883606026
     treatment3_3="ทรีตเมนต์ 3 กลุ่ม 3",
     therapist3="พนักงาน 3"
 )
-@app_commands.choices(
-    สาขา=[app_commands.Choice(name=b, value=b) for b in BRANCHES],
-    treatment1_1=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_1],
-    treatment1_2=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_2],
-    treatment1_3=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_3],
-    therapist1=[app_commands.Choice(name=t, value=t) for t in THERAPISTS],
-    treatment2_1=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_1],
-    treatment2_2=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_2],
-    treatment2_3=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_3],
-    therapist2=[app_commands.Choice(name=t, value=t) for t in THERAPISTS],
-    treatment3_1=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_1],
-    treatment3_2=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_2],
-    treatment3_3=[app_commands.Choice(name=t, value=t) for t in TREATMENTS_SPLIT_3],
-    therapist3=[app_commands.Choice(name=t, value=t) for t in THERAPISTS]
-)
-async def ส่งtrt(interaction: discord.Interaction, สาขา: str, ลูกค้า: str,
-                 ใช้_หมวก: Optional[bool] = False,
-                 ใช้_กกน: Optional[bool] = False,
-                 ใช้_ชุดทำความสะอาด: Optional[bool] = False,
-                 ใช้_milky: Optional[bool] = False,
-                 ใช้_ยาชา: Optional[bool] = False,
-                 ใช้_แล็ปยาชา: Optional[bool] = False,
-                 treatment1_1: Optional[str] = None, treatment1_2: Optional[str] = None, treatment1_3: Optional[str] = None, therapist1: Optional[str] = None,
-                 treatment2_1: Optional[str] = None, treatment2_2: Optional[str] = None, treatment2_3: Optional[str] = None, therapist2: Optional[str] = None,
-                 treatment3_1: Optional[str] = None, treatment3_2: Optional[str] = None, treatment3_3: Optional[str] = None, therapist3: Optional[str] = None):
+async def ส่งtrt(interaction: discord.Interaction, สาขา: str, ลูกค้า: str, ใช้_หมวก: Optional[bool] = False, ใช้_กกน: Optional[bool] = False, ใช้_ชุดทำความสะอาด: Optional[bool] = False, ใช้_milky: Optional[bool] = False, ใช้_ยาชา: Optional[bool] = False, ใช้_แล็ปยาชา: Optional[bool] = False, treatment1_1: Optional[str] = None, treatment1_2: Optional[str] = None, treatment1_3: Optional[str] = None, therapist1: Optional[str] = None, treatment2_1: Optional[str] = None, treatment2_2: Optional[str] = None, treatment2_3: Optional[str] = None, therapist2: Optional[str] = None, treatment3_1: Optional[str] = None, treatment3_2: Optional[str] = None, treatment3_3: Optional[str] = None, therapist3: Optional[str] = None):
 
     await interaction.response.defer(thinking=True)
     today_date = datetime.now().strftime("%Y-%m-%d")
@@ -90,20 +66,20 @@ async def ส่งtrt(interaction: discord.Interaction, สาขา: str, ล�
     for t, p in treatments:
         if t and p:
             msg += f"- {t} | {p}\n"
-    equipment_list = []
+    equipment_used = []
     if ใช้_หมวก:
-        equipment_list.append("TRT-หมวก")
+        equipment_used.append("TRT-หมวก")
     if ใช้_กกน:
-        equipment_list.append("TRT-กกน")
+        equipment_used.append("TRT-กกน")
     if ใช้_ชุดทำความสะอาด:
-        equipment_list.append("TRT-ชุดทำความสะอาด+บำรุง")
+        equipment_used.append("TRT-ชุดทำความสะอาด+บำรุง")
     if ใช้_milky:
-        equipment_list.append("TRT-Milky ทำความสะอาด")
+        equipment_used.append("TRT-Milky ทำความสะอาด")
     if ใช้_ยาชา:
-        equipment_list.append("TRT-ยาชา")
+        equipment_used.append("TRT-ยาชา")
     if ใช้_แล็ปยาชา:
-        equipment_list.append("แล็ปยาชาหน้ากาก")
-    msg += f"อุปกรณ์: {', '.join(equipment_list)}" if equipment_list else "ไม่มีอุปกรณ์"
+        equipment_used.append("แล็ปยาชาหน้ากาก")
+    msg += f"อุปกรณ์: {', '.join(equipment_used)}" if equipment_used else "ไม่มีอุปกรณ์"
     channel = interaction.guild.get_channel(TREATMENT_CHANNEL_ID)
     await channel.send(msg)
     await interaction.followup.send(f"✅ บันทึกเรียบร้อย Group ID: {group_id}", ephemeral=True)
