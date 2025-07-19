@@ -6,26 +6,30 @@ import os
 import json
 from dotenv import load_dotenv
 
-# โหลด token และ channel จาก .env
+# โหลด token และ channel จาก .env หรือ Railway Variables
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
-CHANNEL_ID = 1394115507883606026
-ADMIN_ONLY_CHANNEL_ID = 1394133334317203476
-TREATMENT_CHANNEL_ID = 1394115507883606026
-
+CHANNEL_ID = int(os.getenv("CHANNEL_ID", 1394115507883606026))
+ADMIN_ONLY_CHANNEL_ID = int(os.getenv("ADMIN_ONLY_CHANNEL_ID", 1394133334317203476))
+TREATMENT_CHANNEL_ID = int(os.getenv("TREATMENT_CHANNEL_ID", 1394115507883606026))
 
 # ตั้งค่า Discord Bot
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-# ฟังก์ชันส่ง Discord
+# ฟังก์ชันส่งข้อความไปยัง Discord
 def send_to_discord(data):
-    channel = bot.get_channel(CHANNEL_ID)
+    # คุณสามารถใช้ logic เลือกห้องได้ที่นี่ เช่น:
+    # ถ้ามี TRT ให้ส่งไปยังห้องทรีตเมนต์
+    target_channel_id = TREATMENT_CHANNEL_ID if "trt" in data else CHANNEL_ID
+    channel = bot.get_channel(target_channel_id)
+
     if not channel:
         print("❌ ไม่พบ Discord Channel")
         return
 
+    # ดึงข้อมูล TRT
     treatments = []
     for t in data.get("trt", []):
         name = t.get("name", "").strip()
@@ -34,6 +38,7 @@ def send_to_discord(data):
         if name:
             treatments.append(f"- {name} จำนวน {amount} เทอราปิสต์: {therapist}")
 
+    # ดึงข้อมูลอุปกรณ์
     equipment_lines = []
     for eq in data.get("equipment", []):
         eq_name = eq.get("name", "").strip()
@@ -41,10 +46,12 @@ def send_to_discord(data):
         if eq_name:
             equipment_lines.append(f"- {eq_name} ({eq_qty})")
 
+    # ไม่มีข้อมูลอะไรเลย ไม่ต้องส่ง
     if not treatments and not equipment_lines:
         print("❌ ไม่มีข้อมูล TRT หรืออุปกรณ์ ไม่ส่งข้อความ")
         return
 
+    # สร้างข้อความ
     msg = (
         f"💆‍♀️ **รายการส่งทรีตเมนต์ (TRT)**\n"
         f"📅 วันที่: {data.get('วันที่', '-')}\n"
@@ -62,7 +69,7 @@ def send_to_discord(data):
     else:
         print("❌ ข้อความสุดท้ายว่าง ไม่ส่ง Discord")
 
-# Flask App
+# Flask app
 app = Flask(__name__)
 
 @app.route('/')
